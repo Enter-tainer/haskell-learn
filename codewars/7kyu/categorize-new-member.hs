@@ -1,5 +1,4 @@
 module Codewars.Kata.Categorize where
-import Codewars.Kata.Categorize.Types
 -- data Membership = Open | Senior deriving (Eq, Show)
 openOrSenior :: [(Int, Int)] -> [Membership]
 openOrSenior [] = []
