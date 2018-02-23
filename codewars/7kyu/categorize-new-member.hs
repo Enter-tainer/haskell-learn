@@ -6,3 +6,5 @@ openOrSenior [] = []
 openOrSenior ((age, hand):xs)
     | age >= 55 && hand > 7 = Senior : (openOrSenior xs)
     | otherwise = Open : (openOrSenior xs)
+-- Another solution (better)
+openOrSenior = map (\(a,b) -> if a >= 55 && b > 7 then Senior else Open)
