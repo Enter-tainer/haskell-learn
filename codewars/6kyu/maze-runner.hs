@@ -10,13 +10,16 @@ mazeRunner maze dir
 moveall :: [[Int]] -> (Int, Int) -> String -> [String]
 moveall maze (x, y) dirs
     | null dirs = []
+    | not $ inmaze maze (x', y') = ["Dead"]
     | otherwise =
         case place of 1 -> ["Dead"]
-                      3 -> "Finish": otherdir
-                      _ -> "Normal": otherdir
+                      3 -> ["Finish"]
+                      _ -> "Normal" : otherdir
         where (x', y') = move maze (x, y) (head dirs)
               otherdir = moveall maze (x', y') (tail dirs)
               place = getval maze (x', y')
+              inmaze maze (xx, yy) = xx > 0 && yy > 0 && xx <= l && yy <= l
+                  where l = length maze
 
 move :: [[Int]] -> (Int, Int) -> Char -> (Int, Int)
 move maze (x, y) dir
