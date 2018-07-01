@@ -9,11 +9,12 @@ tokenize x
   | otherwise = Just $ mtokenize $ x
 
 mtokenize :: String -> [Token]
-mtokenize str@(x:xs) 
+mtokenize str@(x:xs)
+  | x == ' ' = mtokenize xs
   | x == '(' = (Brackets $ mtokenize $ realPre) 
-               : (mtokenize $ trimStart suc)
+               : (mtokenize suc)
   | otherwise = let (now, rem) = span (\y -> isSame x y) str
-                in (Token $ trimEnd now) : (mtokenize $ trimStart rem)
+                in (Token now) : (mtokenize rem)
   where cnt qwq = length . filter (==qwq)
         _:pre:_ = filter (\x -> (cnt '(' x) == (cnt ')' x)) $ inits str
         suc = drop (length pre) str
@@ -31,12 +32,3 @@ isValidBracketsSeq rawStr = leftCnt rawStr == rightCnt rawStr &&
 isSame :: Char -> Char -> Bool
 isSame x y = (isOp x && isOp y) || (isLetter x && isLetter y)
   where isOp qwq = qwq `elem` "!#$%&*+-/<=>@^_.,;"
-
-trim :: String -> String
-trim = trimStart . trimEnd
-
-trimStart :: String -> String
-trimStart = dropWhile isSpace
-
-trimEnd :: String -> String
-trimEnd = reverse . dropWhile isSpace . reverse
