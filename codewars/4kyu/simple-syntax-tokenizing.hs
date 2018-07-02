@@ -3,7 +3,7 @@ import Data.List
 import Data.Char
 data Token = Token String | Brackets [Token]
   deriving (Eq, Show)
-
+tokenize :: String -> Maybe [Token]
 tokenize x
   | isValidBracketsSeq x == False = Nothing
   | otherwise = Just $ mtokenize $ x
@@ -13,10 +13,10 @@ mtokenize str@(x:xs)
   | x == ' ' = mtokenize xs
   | x == '(' = (Brackets $ mtokenize $ realPre) 
                : (mtokenize suc)
-  | otherwise = let (now, rem) = span (\y -> isSame x y) str
-                in (Token now) : (mtokenize rem)
+  | otherwise = let (now, remain) = span (\y -> isSame x y) str
+                in (Token now) : (mtokenize remain)
   where cnt qwq = length . filter (==qwq)
-        _:pre:_ = filter (\x -> (cnt '(' x) == (cnt ')' x)) $ inits str
+        _:pre:_ = filter (\xqwq -> (cnt '(' xqwq) == (cnt ')' xqwq)) $ inits str
         suc = drop (length pre) str
         realPre = init $ tail pre
 mtokenize [] = []
