@@ -1,14 +1,12 @@
-import Data.Int
 import Data.List
 
-inv :: Int64 -> Int64 -> Int64
-inv n p = invVec !! intN
+inv :: Int -> Int -> Int
+inv n p = invVec !! n
   where
-    intN = fromIntegral n
-    invVec = gen (intN + 1) f
+    invVec = gen (n + 1) f
     gen len f' = map f' $ take len [0..]
     f 1 = 1
-    f k = ((invVec !! fromIntegral (p `mod` k)) * (p - p `div` k) `mod` p) `mod` p
+    f k = ((invVec !! (p `mod` k)) * (p - p `div` k) `mod` p) `mod` p
 
 main :: IO()
 main = do
