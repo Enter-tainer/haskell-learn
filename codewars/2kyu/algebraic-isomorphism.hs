@@ -1,8 +1,7 @@
 module ISO where
 
-module ISO where
-
 import Data.Void
+import Data.Tuple
 -- A type of `Void` have no value.
 -- So it is impossible to construct `Void`,
 -- unless using undefined, error, unsafeCoerce, infinite recursion, etc
@@ -157,28 +156,43 @@ plusComm = (f, g)
   where
     f (Left a) = Right a
     f (Right b) = Left b
-    g (Left b) = Left a
-    g (Right a) = Left b
+    g (Left b) = Right b
+    g (Right a) = Left a
 
 -- a + b + c = a + (b + c)
 plusAssoc :: ISO (Either (Either a b) c) (Either a (Either b c))
-plusAssoc = error "do plusAssoc"
+plusAssoc = (f, g)
+  where
+    f (Left (Left a)) = Left a
+    f (Left (Right b)) = Right $ Left b
+    f (Right c) = Right $ Right c
+    g (Left a) = Left $ Left a
+    g (Right (Left b)) = Left $ Right b
+    g (Right (Right c)) = Right c
 
 -- a * b = b * a
 multComm :: ISO (a, b) (b, a)
-multComm = error "do multComm"
+multComm = (swap, swap)
 
 -- a * b * c = a * (b * c)
 multAssoc :: ISO ((a, b), c) (a, (b, c))
-multAssoc = error "do multAssoc"
+multAssoc = (f, g)
+  where
+    f ((a, b), c) = (a, (b, c))
+    g (a, (b, c)) = ((a, b), c)
 
 -- dist :: a * (b + c) = a * b + a * c
 dist :: ISO (a, (Either b c)) (Either (a, b) (a, c))
-dist = error "do dist"
+dist = (f, g)
+  where
+    f (a, Left b) = Left (a, b)
+    f (a, Right c) = Right (a, c)
+    g (Left (a, b)) = (a, Left b)
+    g (Right (a, c)) = (a, Right c)
 
 -- (c ^ b) ^ a = c ^ (a * b)
 curryISO :: ISO (a -> b -> c) ((a, b) -> c)
-curryISO = error "do curryISO"
+curryISO = (uncurry, curry)
 
 -- 1 = S O (we are using peano arithmetic)
 -- https://en.wikipedia.org/wiki/Peano_axioms
@@ -187,18 +201,30 @@ one = (const Nothing, const ())
 
 -- 2 = S (S O)
 two :: ISO Bool (Maybe (Maybe Void))
-two = error "do two"
+two = (f, g)
+  where
+    f True = Just Nothing
+    f False = Nothing
+    g (Just Nothing) = True
+    g Nothing = False
 
 -- O + b = b
 plusO :: ISO (Either Void b) b
 plusO = (left, Right)
   where
     left (Left  x) = absurd x -- absurd :: Void -> a
-    left (Right x) = error "do plusO"
+    left (Right x) = x
 
 -- S a + b = S (a + b)
 plusS :: ISO (Either (Maybe a) b) (Maybe (Either a b))
-plusS = error "do plusS"
+plusS = (f, g)
+  where
+    f (Left (Just a)) = Just $ Left a
+    f (Left Nothing) = Nothing
+    f (Right b) = Just $ Right b
+    g Nothing = Left Nothing
+    g (Just (Left a)) = Left $ Just a
+    g (Just (Right b)) = Right b
 
 -- 1 + b = S b
 plusSO :: ISO (Either () b) (Maybe b)
@@ -206,11 +232,18 @@ plusSO = isoPlus one refl `trans` plusS `trans` isoS plusO
 
 -- O * a = O
 multO :: ISO (Void, a) Void
-multO = error "do multO"
+multO = (fst, g)
+  where
+    g x = (x, absurd x)
 
 -- S a * b = b + a * b
 multS :: ISO (Maybe a, b) (Either b (a, b))
-multS = error "do multS"
+multS = (f, g)
+  where
+    f (Just a, b) = Right (a, b)
+    f (Nothing, b) = Left b
+    g (Left b) = (Nothing, b)
+    g (Right (a, b)) = (Just a, b)
 
 -- 1 * b = b
 multSO :: ISO ((), b) b
@@ -223,17 +256,26 @@ multSO =
 
 -- a ^ O = 1
 powO :: ISO (Void -> a) ()
-powO = error "do powO"
+powO = (const (), \_ x -> absurd x)
 
 -- a ^ (S b) = a * (a ^ b)
 powS :: ISO (Maybe b -> a) (a, b -> a)
-powS = error "do powS"
+powS = (f, g)
+  where
+    f (mba) = (mba Nothing, \b -> mba (Just b))
+    g (a, ba) = h
+      where
+        h Nothing = a
+        h (Just b) = ba b
 
 -- a ^ 1 = a
 -- Go the hard way (like multSO, plusSO)
 -- to prove that you really get what is going on!
 powSO :: ISO (() -> a) a
-powSO = error "do powSO" --_ `trans` powS `trans` _
+powSO = (f, g)
+  where
+    f x = x ()
+    g x = const x
 -- Here's a trick:
 -- replace undefined with the rhs of the comment on previous line
 -- When you're not sure what to fill in for a value,
