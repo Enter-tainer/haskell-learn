@@ -44,7 +44,7 @@ l@(ParingHeap u) >< r@(ParingHeap v)
 
 infixl 5 <|
 (<|) :: (Ord a) => ParingHeap a -> a -> ParingHeap a
-tr <| val = tr >< ParingHeap (ParingTree val [])
+tr <| v = tr >< ParingHeap (ParingTree v [])
 
 deleteMin :: (Ord a) => ParingHeap a -> ParingHeap a
 deleteMin Empty = error "Cannot delete anything from empty heap"
@@ -61,7 +61,8 @@ main = do
   repM_ n (Empty) $ \(root) -> do
     (x:xs) <- map (int . T.unpack) . T.words <$> I.getLine
     case x of 1 -> do
-                     let n:[] = xs
-                     return (root <| n)
+                     let num:[] = xs
+                     return (root <| num)
               2 -> printf "%d\n" (findMin root) >> return (root)
               3 -> return (deleteMin root)
+              _ -> error "nm$l"
