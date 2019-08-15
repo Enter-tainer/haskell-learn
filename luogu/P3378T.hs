@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -O2 #-}
 -- {-# language Strict #-}
-module Main where
+module P3378T where
 import Data.Char (digitToInt, isSpace)
 import Text.Printf (printf)
 import qualified Data.Text as T

@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -O2 #-}
 -- {-# LANGUAGE Strict #-}
-module Main where
+module P3369 where
 import Prelude hiding (succ)
 import Data.Char (digitToInt, isSpace)
 import Text.Printf (printf)

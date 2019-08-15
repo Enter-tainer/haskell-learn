@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -O2 #-}
 {-# language Strict #-}
-module Main where
+module P1177 where
 import Control.Monad
 import Data.Char (digitToInt, isSpace)
 import Data.List
