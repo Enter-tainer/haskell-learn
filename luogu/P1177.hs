@@ -23,11 +23,11 @@ msort (x:xs) = msort l ++ [x] ++ msort r
     r = filter (>x) xs
 
 printRes :: Int -> IO ()
-printRes i = printf "%d " i
+printRes = printf "%d "
 
 main :: IO ()
 main = do
-  n <- int <$> T.unpack <$> I.getLine
+  _ <- int . T.unpack <$> I.getLine
   xs <- map (int . T.unpack) . T.words <$> I.getLine
   let res = sort xs
   forM_ res printRes
