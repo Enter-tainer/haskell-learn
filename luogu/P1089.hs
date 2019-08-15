@@ -1,6 +1,6 @@
 module P1089 where
-import           Data.Foldable
 import           Data.Char     (digitToInt, isSpace)
+import           Data.Foldable
 import           Data.IORef
 import qualified Data.Text     as T
 import qualified Data.Text.IO  as I
