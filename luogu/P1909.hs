@@ -2,7 +2,6 @@ module P1909 where
 
 import           Control.Monad
 import           Data.Char     (digitToInt, isSpace)
-import           Data.List
 import qualified Data.Text     as T
 import qualified Data.Text.IO  as I
 import           Text.Printf   (printf)
