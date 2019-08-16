@@ -1,3 +1,4 @@
+module L118 where
 import Text.Regex.Posix
 import Data.Char
 

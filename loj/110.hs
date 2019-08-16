@@ -1,3 +1,4 @@
+module L110 where
 import Data.List
 
 inv :: Int -> Int -> Int
