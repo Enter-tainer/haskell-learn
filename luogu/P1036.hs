@@ -1,8 +1,7 @@
 {-# OPTIONS_GHC -O2 #-}
-module P1217 where
+module P1036 where
 
 import           Data.STRef
-import           Data.Foldable
 import           Data.List
 import           Control.Monad.ST
 import           Control.Monad
@@ -42,22 +41,14 @@ isPrime x = runST $ do
     when (v * v >= x) mzero
   readSTRef res
 
-makePal :: Int -> Int
-makePal 11 = 11
-makePal x  = (10 ^ (1 + getRank x)) * (x `div` 10) + reverseInt x
- where
-  reverseInt = (read . reverse . show) :: Int -> Int
-  getRank t =
-    length $ takeWhile (> 0) [ t `div` (10 ^ r) | r <- [1 ..] :: [Int] ]
-
-
-getPal :: (Int, Int) -> [Int]
-getPal (l, r) =
-  [ x | x <- takeWhile (<= r) (makePal <$> [1 ..]), isPrime x, x >= l ]
+solve :: [Int] -> Int -> [Int]
+solve xs k = filter isPrime ys
+  where
+    ys = sum <$> (filter ((==k) . length) $ subsequences xs)
 
 main :: IO ()
 main = do
-  [l, r] <- readToList
-  for_ (sort $ getPal (l, r)) $ \x -> do
-    printf "%d\n" x
+  [_, k] <- readToList
+  xs <- readToList
+  printf "%d\n" $ length $ solve xs k
   return ()
