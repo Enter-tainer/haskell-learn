@@ -11,13 +11,13 @@ while cond_ stat = do
     _ <- stat
     while cond_ stat
 
-loop :: Monad m => MaybeT m a -> m (Maybe b)
-loop stat = runMaybeT $ forever stat
+loop :: Monad m => MaybeT m a -> m ()
+loop stat = (runMaybeT $ forever stat) >> return ()
 
 main :: IO ()
 main = do
   i <- newIORef (1::Int)
-  _ <- loop $ do
+  loop $ do
     j <- lift $ readIORef i
     lift $ printf "%d\n" j
     lift $ modifyIORef' i (+1)
